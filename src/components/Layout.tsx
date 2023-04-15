@@ -111,7 +111,7 @@ const lapHandler = () =>{
         return;
     }
     
-    const newLap = {
+    const newLap:ILap = {
         min:min,
         sec:sec,
         milli:milli
