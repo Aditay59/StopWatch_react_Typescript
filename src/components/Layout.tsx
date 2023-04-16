@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect,useRef, useState } from 'react';
 import '../App.css';
 
 interface ILap {
@@ -20,6 +20,8 @@ const Layout = () =>{
 
     const [lap,setLap] = useState<ILap[]>([]);
     //const [todoList,setTodoList] = useState<ITask[]>([]);
+
+    const lapRef = useRef<HTMLDivElement>(null);
 
     const startHandler = () =>{
 
@@ -120,6 +122,12 @@ const lapHandler = () =>{
     setLap([...lap,newLap]);
 }
 
+useEffect(() => {
+    if (lapRef.current) {
+      lapRef.current.scrollTop = lapRef.current.scrollHeight;
+    }
+  }, [lap]);
+
     return (
         <>
         <div className='container'>
@@ -149,20 +157,9 @@ const lapHandler = () =>{
             </div>
         </div>
 
-             {/* <div className='lap'>
-
-                {
-                    lap.map((item,index)=>(
-                        <div key={index}>
-                            <p><span> {item.min} </span> : <span>{item.sec}</span> : <span> {item.milli} </span> </p>
-                            </div>
-                    ))
-                }
-            </div> */}
-
             {
                 lap.length > 0 && (
-                    <div className='lap'>
+                    <div className='lap' ref={lapRef}>
                         {
                         lap.map((item,index)=>(
                         <div key={index}>
