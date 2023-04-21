@@ -1,6 +1,5 @@
 import React, { useEffect,useRef, useState } from 'react';
 import '../App.css';
-import { TIMEOUT } from 'dns';
 
 interface ILap {
     min:number;
