@@ -1,5 +1,6 @@
 import React, { useEffect,useRef, useState } from 'react';
 import '../App.css';
+import { TIMEOUT } from 'dns';
 
 interface ILap {
     min:number;
@@ -13,7 +14,7 @@ const Layout = () =>{
     const [sec,setSec] = useState<number>(0);
     const [milli,setMilli] = useState<number>(0);
 
-    const [millitimer,setmillitimer] = useState<any>();
+    const [millitimer,setmillitimer] = useState<NodeJS.Timer>();
     //const [sectimer,setsectimer] = useState<any>();
     //const [mintimer,setmintimer] = useState<any>();
     const [isStop,setStop] = useState<boolean>(false);
@@ -23,11 +24,7 @@ const Layout = () =>{
 
     const lapRef = useRef<HTMLDivElement>(null);
 
-    const startHandler = () =>{
-
-        setStop(true);
-
-        const millisecondId = setInterval(() =>{
+    const timer = () => {
             setMilli(prevMilli=>{
                 if(prevMilli===99) {
                     setSec(prevSec=>{
@@ -45,11 +42,38 @@ const Layout = () =>{
                     return 0;
                 }
                 return prevMilli+1;
-            })
-        },10);
+            });
+    }
 
-        setmillitimer(millisecondId);
+    const startHandler = () =>{
+        setStop(true);
+        timer();
+        clearInterval(millitimer);
+        setmillitimer(setInterval(timer,10));
 
+        // const millisecondId = setInterval(() =>{
+        //     setMilli(prevMilli=>{
+        //         if(prevMilli===99) {
+        //             setSec(prevSec=>{
+        //                 if(prevSec===59) {
+        //                     setMin(prevMin=>{
+        //                         if(prevMin===59) {
+        //                             return 0;
+        //                         }
+        //                         return prevMin+1;
+        //                     })
+        //                     return 0
+        //                 }
+        //                 return prevSec+1;
+        //             });
+        //             return 0;
+        //         }
+        //         return prevMilli+1;
+        //     })
+        // },10);
+
+        //setmillitimer(millisecondId);
+        //clearInterval(millisecondId);
     }
 
     // const startHandler = () =>{
@@ -100,10 +124,12 @@ const stopHandler = () =>{
 }
 
 const resetHandler = () =>{
+    clearInterval(millitimer);
     setSec(0);
     setMilli(0);
     setMin(0);
     setLap([]);
+    setStop(false);
 }
    
 
@@ -147,7 +173,6 @@ useEffect(() => {
             ):(
                 <button className='btn btn2' onClick={stopHandler}>Stop</button>
             )
-            
             }
                &nbsp;
                  <button className='btn btn3' onClick={resetHandler}>Reset</button>
